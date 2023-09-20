@@ -1,5 +1,7 @@
 package com.lizhengyu.train.member.controller;
 
+import com.lizhengyu.train.common.resp.CommonResp;
+import com.lizhengyu.train.member.req.MemberRegisterReq;
 import com.lizhengyu.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +16,15 @@ public class MemberController {
     @Resource
     private MemberService memberService;
     @GetMapping("/count")
-    public Integer count(){
+    public CommonResp<Integer> count(){
 
-        return memberService.count();
+        return new CommonResp<>(memberService.count());
 
     }
     @PostMapping("/register")
-    public long register(String mobile){
+    public CommonResp<Long> register(MemberRegisterReq req){
 
-        return memberService.register(mobile);
+        return new CommonResp<>(memberService.register(req));
 
     }
 }
