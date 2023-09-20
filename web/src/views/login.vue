@@ -39,12 +39,12 @@
 
 <script>
 import { defineComponent, reactive } from 'vue';
-/*
 import axios from 'axios';
 import { notification } from 'ant-design-vue';
-import { useRouter } from 'vue-router'
-import store from "@/store";
-*/
+
+/*import { useRouter } from 'vue-router'
+import store from "@/store";*/
+
 
 export default defineComponent({
   name: "login-view",
@@ -55,17 +55,37 @@ export default defineComponent({
       mobile: '13000000000',
       code: '',
     });
-  const onFinish=values=>{
-    console.log('Success',values);
-  };
-    const onFinishFailed=errorInfo=>{
-      console.log('Success',errorInfo);
-    };
 
+    const sendCode=()=>{
+      axios.post("http://localhost:8000/member/member/send-code",{
+        mobile: loginForm.mobile
+      }).then(response => {
+        console.log(response);
+        let data = response.data;
+        if(data.success){
+          notification.success({description:'发送验证码成功！'})
+          loginForm.code="8888";
+        }else{
+          notification.error({description:data.message});
+        }
+      });
+    };
+    const login=()=>{
+      axios.post("http://localhost:8000/member/member/login",loginForm).then(response => {
+        console.log(response);
+        let data = response.data;
+        if(data.success){
+          notification.success({description:'登陆成功！'})
+          loginForm.code="8888";
+        }else{
+          notification.error({description:data.message});
+        }
+      });
+    };
     return {
       loginForm,
-      onFinish,
-      onFinishFailed
+      sendCode,
+      login
     };
   },
 });
