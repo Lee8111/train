@@ -4,6 +4,7 @@ import com.lizhengyu.train.common.exception.BusinessException;
 import com.lizhengyu.train.common.resp.CommonResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -55,7 +56,7 @@ public class ControllerExceptionHandler {
      * 校验异常统一处理
      * @param e
      * @return
-     *//*
+     */
     @ExceptionHandler(value = BindException.class)
     @ResponseBody
     public CommonResp exceptionHandler(BindException e) {
@@ -66,7 +67,7 @@ public class ControllerExceptionHandler {
         return commonResp;
     }
 
-    *//**
+    /**
      * 校验异常统一处理
      * @param e
      * @return
