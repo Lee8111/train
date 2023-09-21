@@ -42,6 +42,7 @@ import { defineComponent, reactive } from 'vue';
 import axios from 'axios';
 import { notification } from 'ant-design-vue';
 import { useRouter } from 'vue-router'
+import store from "@/store";
 /*import store from "@/store";*/
 
 
@@ -74,6 +75,7 @@ export default defineComponent({
           notification.success({description:'登陆成功！'});
           //登陆成功，跳转到控制台主页。
           router.push("/");
+          store.commit("setMember",data.content);
           loginForm.code="8888";
         }else{
           notification.error({description:data.message});
