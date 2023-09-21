@@ -1,14 +1,16 @@
 package com.lizhengyu.train.member.controller;
 
+import com.lizhengyu.train.common.context.LoginMemberContext;
 import com.lizhengyu.train.common.resp.CommonResp;
+import com.lizhengyu.train.member.req.PassengerQueryReq;
 import com.lizhengyu.train.member.req.PassengerSaveReq;
+import com.lizhengyu.train.member.resp.PassengerQueryResp;
 import com.lizhengyu.train.member.service.PassengerService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/passenger")
@@ -23,5 +25,11 @@ public class PassengerController {
         return new CommonResp<>();
 
     }
+    @GetMapping("/query-list")
+    public CommonResp<List<PassengerQueryResp>> queryList(@Valid PassengerQueryReq req){
+        req.setMemberId(LoginMemberContext.getId());
+        List<PassengerQueryResp> list = passengerService.queryList(req);
+        return new CommonResp<>(list);
 
+    }
 }

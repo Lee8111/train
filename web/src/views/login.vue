@@ -74,7 +74,7 @@ export default defineComponent({
         if(data.success){
           notification.success({description:'登陆成功！'});
           //登陆成功，跳转到控制台主页。
-          router.push("/");
+          router.push("/welcome");
           store.commit("setMember",data.content);
           loginForm.code="8888";
         }else{
