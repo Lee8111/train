@@ -1,6 +1,8 @@
 package com.lizhengyu.train.member.req;
 
-public class PassengerQueryReq {
+import com.lizhengyu.train.common.req.PageReq;
+
+public class PassengerQueryReq extends PageReq {
 
 
     private Long memberId;
