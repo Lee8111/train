@@ -16,6 +16,11 @@
           <user-outlined /> &nbsp; 关于
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/station">
+        <router-link to="/station">
+          <user-outlined /> &nbsp; 车站管理
+        </router-link>
+      </a-menu-item>
       <a-sub-menu key="member">
         <template #title>
           <span>

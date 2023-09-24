@@ -2,11 +2,8 @@ package com.lizhengyu.train.generator.gen;
 
 
 import cn.hutool.core.util.StrUtil;
-/*import com.lizhengyu.train.business.enums.ConfirmOrderStatusEnum;
-import com.lizhengyu.train.business.enums.SeatColEnum;
-import com.lizhengyu.train.business.enums.SeatTypeEnum;
-import com.lizhengyu.train.business.enums.TrainTypeEnum;*/
 import com.lizhengyu.train.member.enums.PassengerTypeEnum;
+
 
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;

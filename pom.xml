@@ -19,9 +19,8 @@
         <module>common</module>
         <module>gateway</module>
         <module>generator</module>
-        <module>common</module>
-        <module>member</module>
-        <module>bussiness</module>
+        <module>business</module>
+
     </modules>
     <properties>
         <java.version>17</java.version>
