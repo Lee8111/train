@@ -3,8 +3,11 @@ package com.lizhengyu.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lizhengyu.train.business.domain.TrainCarriage;
+import com.lizhengyu.train.business.enums.SeatColEnum;
 import com.lizhengyu.train.common.resp.PageResp;
 import com.lizhengyu.train.common.util.SnowUtil;
 import com.lizhengyu.train.business.domain.TrainSeat;
@@ -17,16 +20,19 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class TrainSeatService {
-
+    DateTime now = DateTime.now();
     private static final Logger LOG = LoggerFactory.getLogger(TrainSeatService.class);
 
     @Resource
     private TrainSeatMapper trainSeatMapper;
+    @Resource
+    private TrainCarriageService trainCarriageService;
 
     public void save(TrainSeatSaveReq req) {
         DateTime now = DateTime.now();
@@ -44,8 +50,11 @@ public class TrainSeatService {
 
     public PageResp<TrainSeatQueryResp> queryList(TrainSeatQueryReq req) {
         TrainSeatExample trainSeatExample = new TrainSeatExample();
-        trainSeatExample.setOrderByClause("id desc");
+        trainSeatExample.setOrderByClause("train_code asc, carriage_index asc, carriage_seat_index asc");
         TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
+        if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
@@ -66,5 +75,39 @@ public class TrainSeatService {
 
     public void delete(Long id) {
         trainSeatMapper.deleteByPrimaryKey(id);
+    }
+
+    @Transactional
+    public void genTrainSeat(String trainCode){
+        TrainSeatExample trainSeatExample = new TrainSeatExample();
+        TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        trainSeatMapper.deleteByExample(trainSeatExample);
+
+        List<TrainCarriage> carriageList = trainCarriageService.selectByTrainCode(trainCode);
+        for (TrainCarriage trainCarriage: carriageList) {
+            Integer rowCount = trainCarriage.getRowCount();
+            String seatType = trainCarriage.getSeatType();
+            int seatIndex=1;
+            List<SeatColEnum> colEnumList = SeatColEnum.getColsByType(seatType);
+            for (int row = 1; row <= rowCount; row++) {
+                for (SeatColEnum seatColEnum: colEnumList) {
+                    TrainSeat trainSeat = new TrainSeat();
+                    trainSeat.setId(SnowUtil.getSnowflakeNextId());
+                    trainSeat.setTrainCode(trainCode);
+                    trainSeat.setCarriageIndex(trainCarriage.getIndex());
+                    trainSeat.setRow(StrUtil.fillBefore(String.valueOf(row),'0',2));
+                    trainSeat.setCol(seatColEnum.getCode());
+                    trainSeat.setSeatType(seatType);
+                    trainSeat.setCarriageSeatIndex(seatIndex++);
+                    trainSeat.setCreateTime(now);
+                    trainSeat.setUpdateTime(now);
+
+                    trainSeatMapper.insert(trainSeat);
+                }
+            }
+
+        }
+
     }
 }

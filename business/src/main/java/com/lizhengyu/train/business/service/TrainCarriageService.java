@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lizhengyu.train.business.enums.SeatColEnum;
 import com.lizhengyu.train.common.resp.PageResp;
 import com.lizhengyu.train.common.util.SnowUtil;
 import com.lizhengyu.train.business.domain.TrainCarriage;
@@ -30,6 +31,11 @@ public class TrainCarriageService {
 
     public void save(TrainCarriageSaveReq req) {
         DateTime now = DateTime.now();
+        // 自动计算出列数和总座位数
+        List<SeatColEnum> seatColEnums = SeatColEnum.getColsByType(req.getSeatType());
+        req.setColCount(seatColEnums.size());
+        req.setSeatCount(req.getColCount() * req.getRowCount());
+
         TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         if (ObjectUtil.isNull(trainCarriage.getId())) {
             trainCarriage.setId(SnowUtil.getSnowflakeNextId());
@@ -44,8 +50,11 @@ public class TrainCarriageService {
 
     public PageResp<TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req) {
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
-        trainCarriageExample.setOrderByClause("id desc");
+        trainCarriageExample.setOrderByClause("train_code asc, `index` asc");
         TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+        if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
@@ -66,5 +75,13 @@ public class TrainCarriageService {
 
     public void delete(Long id) {
         trainCarriageMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<TrainCarriage> selectByTrainCode(String trainCode){
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.setOrderByClause("`index` asc");
+        TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        return trainCarriageMapper.selectByExample(trainCarriageExample);
     }
 }

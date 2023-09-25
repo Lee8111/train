@@ -3,6 +3,7 @@ package com.lizhengyu.train.business.controller.admin;
 import com.lizhengyu.train.business.req.TrainQueryReq;
 import com.lizhengyu.train.business.req.TrainSaveReq;
 import com.lizhengyu.train.business.resp.TrainQueryResp;
+import com.lizhengyu.train.business.service.TrainSeatService;
 import com.lizhengyu.train.business.service.TrainService;
 import com.lizhengyu.train.common.resp.CommonResp;
 import com.lizhengyu.train.common.resp.PageResp;
@@ -18,6 +19,8 @@ public class TrainAdminController {
 
     @Resource
     private TrainService trainService;
+    @Resource
+    private TrainSeatService trainSeatService;
 
     @PostMapping("/save")
     public CommonResp<Object> save(@Valid @RequestBody TrainSaveReq req) {
@@ -40,6 +43,12 @@ public class TrainAdminController {
     public CommonResp<List<TrainQueryResp>> queryAll() {
         List<TrainQueryResp> list = trainService.queryAll();
         return new CommonResp<>(list);
+    }
+
+    @GetMapping("/gen-seat/{trainCode}")
+    public CommonResp<Object> genSeat(@PathVariable String trainCode) {
+        trainSeatService.genTrainSeat(trainCode);
+        return new CommonResp<>();
     }
 
 }
