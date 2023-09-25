@@ -1,19 +1,22 @@
 package com.lizhengyu.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.lizhengyu.train.business.enums.SeatColEnum;
-import com.lizhengyu.train.common.resp.PageResp;
-import com.lizhengyu.train.common.util.SnowUtil;
 import com.lizhengyu.train.business.domain.TrainCarriage;
 import com.lizhengyu.train.business.domain.TrainCarriageExample;
+import com.lizhengyu.train.business.enums.SeatColEnum;
 import com.lizhengyu.train.business.mapper.TrainCarriageMapper;
 import com.lizhengyu.train.business.req.TrainCarriageQueryReq;
 import com.lizhengyu.train.business.req.TrainCarriageSaveReq;
 import com.lizhengyu.train.business.resp.TrainCarriageQueryResp;
+import com.lizhengyu.train.common.exception.BusinessException;
+import com.lizhengyu.train.common.exception.BusinessExceptionEnum;
+import com.lizhengyu.train.common.resp.PageResp;
+import com.lizhengyu.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,11 @@ public class TrainCarriageService {
 
         TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         if (ObjectUtil.isNull(trainCarriage.getId())) {
+            //保存之前先校验唯一键是否存在
+            TrainCarriage trainCarriageDB = selectByUnique(req.getTrainCode(), req.getIndex());
+            if(ObjectUtil.isNotEmpty(trainCarriageDB)){
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CARRIAGE_INDEX_UNIQUE_ERROR);
+            }
             trainCarriage.setId(SnowUtil.getSnowflakeNextId());
             trainCarriage.setCreateTime(now);
             trainCarriage.setUpdateTime(now);
@@ -45,6 +53,16 @@ public class TrainCarriageService {
         } else {
             trainCarriage.setUpdateTime(now);
             trainCarriageMapper.updateByPrimaryKey(trainCarriage);
+        }
+    }
+    private TrainCarriage selectByUnique(String trainCode,Integer index) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.createCriteria().andTrainCodeEqualTo(trainCode).andIndexEqualTo(index);
+        List<TrainCarriage> list = trainCarriageMapper.selectByExample(trainCarriageExample);
+        if(CollUtil.isNotEmpty(list)){
+            return list.get(0);
+        }else{
+            return null;
         }
     }
 
@@ -84,4 +102,6 @@ public class TrainCarriageService {
         criteria.andTrainCodeEqualTo(trainCode);
         return trainCarriageMapper.selectByExample(trainCarriageExample);
     }
+
+
 }
