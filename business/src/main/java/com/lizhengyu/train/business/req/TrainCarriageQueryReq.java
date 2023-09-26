@@ -9,12 +9,14 @@ public class TrainCarriageQueryReq extends PageReq {
         return trainCode;
     }
 
-    public void setTrainCode(String trainCode) {
-        this.trainCode = trainCode;
-    }
     @Override
     public String toString() {
         return "TrainCarriageQueryReq{" +
-                "} " + super.toString();
+                "trainCode='" + trainCode + '\'' +
+                '}';
+    }
+
+    public void setTrainCode(String trainCode) {
+        this.trainCode = trainCode;
     }
 }
