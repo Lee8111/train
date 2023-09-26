@@ -1,11 +1,11 @@
 package com.lizhengyu.train.business.req;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.math.BigDecimal;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 public class DailyTrainStationSaveReq {
 
@@ -28,7 +28,7 @@ public class DailyTrainStationSaveReq {
     private String trainCode;
 
     /**
-     * 站序|第一站是0
+     * 站序
      */
     @NotNull(message = "【站序】不能为空")
     private Integer index;
