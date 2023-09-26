@@ -7,15 +7,15 @@ import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lizhengyu.train.business.domain.TrainCarriage;
-import com.lizhengyu.train.business.enums.SeatColEnum;
-import com.lizhengyu.train.common.resp.PageResp;
-import com.lizhengyu.train.common.util.SnowUtil;
 import com.lizhengyu.train.business.domain.TrainSeat;
 import com.lizhengyu.train.business.domain.TrainSeatExample;
+import com.lizhengyu.train.business.enums.SeatColEnum;
 import com.lizhengyu.train.business.mapper.TrainSeatMapper;
 import com.lizhengyu.train.business.req.TrainSeatQueryReq;
 import com.lizhengyu.train.business.req.TrainSeatSaveReq;
 import com.lizhengyu.train.business.resp.TrainSeatQueryResp;
+import com.lizhengyu.train.common.resp.PageResp;
+import com.lizhengyu.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,5 +109,12 @@ public class TrainSeatService {
 
         }
 
+    }
+    public List<TrainSeat> selectByTrainCode(String trainCode){
+        TrainSeatExample trainSeatExample = new TrainSeatExample();
+        trainSeatExample.setOrderByClause("`id` asc");
+        TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        return trainSeatMapper.selectByExample(trainSeatExample);
     }
 }
