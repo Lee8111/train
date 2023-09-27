@@ -2,6 +2,7 @@ package com.lizhengyu.train.generator.gen;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.lizhengyu.train.business.enums.ConfirmOrderStatusEnum;
 import com.lizhengyu.train.business.enums.SeatColEnum;
 import com.lizhengyu.train.business.enums.SeatTypeEnum;
 import com.lizhengyu.train.business.enums.TrainTypeEnum;
@@ -29,7 +30,7 @@ public class EnumGenerator {
             toJson(TrainTypeEnum.class, bufferObject, bufferArray);
             toJson(SeatTypeEnum.class, bufferObject, bufferArray);
             toJson(SeatColEnum.class, bufferObject, bufferArray);
-            /*toJson(ConfirmOrderStatusEnum.class, bufferObject, bufferArray);*/
+            toJson(ConfirmOrderStatusEnum.class, bufferObject, bufferArray);
 
             StringBuffer buffer = bufferObject.append("\r\n").append(bufferArray);
             writeJs(buffer);

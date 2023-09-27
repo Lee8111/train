@@ -1,6 +1,6 @@
 import { createStore } from 'vuex'
 
-const MEMBER="EMBER";
+const MEMBER="MEMBER";
 export default createStore({
   state: {
     member: window.SessionStorage.get(MEMBER) ||{}
