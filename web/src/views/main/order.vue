@@ -124,20 +124,20 @@
 
   <!-- 第一层验证码 纯前端 -->
   <a-modal v-model:visible="firstImageCodeModalVisible" :title="null" :footer="null" :closable="false"
-           style="top: 50px; width: 400px">
-    <p style="text-align: center; font-weight: bold; font-size: 18px">
-      使用纯前端验证码削弱瞬时高峰<br/>
-      减小后端验证码接口的压力
-    </p>
-    <p>
-      <a-input v-model:value="firstImageCodeTarget" placeholder="验证码">
-        <template #suffix>
-          {{firstImageCodeSourceA}} + {{firstImageCodeSourceB}}
-        </template>
-      </a-input>
-    </p>
-    <a-button type="danger" block @click="validFirstImageCode">提交验证码</a-button>
-  </a-modal>
+                      style="top: 50px; width: 400px">
+  <p style="text-align: center; font-weight: bold; font-size: 18px">
+    使用纯前端验证码削弱瞬时高峰<br/>
+    减小后端验证码接口的压力
+  </p>
+  <p>
+    <a-input v-model:value="firstImageCodeTarget" placeholder="验证码">
+      <template #suffix>
+        {{firstImageCodeSourceA}} + {{firstImageCodeSourceB}}
+      </template>
+    </a-input>
+  </p>
+  <a-button type="danger" block @click="validFirstImageCode">提交验证码</a-button>
+</a-modal>
 
   <a-modal v-model:visible="lineModalVisible" title="排队购票" :footer="null" :maskClosable="false" :closable="false"
            style="top: 50px; width: 400px">

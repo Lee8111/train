@@ -48,12 +48,20 @@ const routes = [{
             path: 'confirm-order',
             component: () => import('@/views/main/business/confirm-order.vue'),
         }]
-    },{
-        path: 'batch/job',
-        name: 'batch/job',
-        component: () => import('../views/main/batch/job.vue'),
-    },]
-    },  {
+    }, {
+        path: 'batch/',
+        children: [{
+            path: 'job',
+            component: () => import('../views/main/batch/job.vue')
+        }]
+    }, {
+        path: 'member/',
+        children: [{
+            path: 'ticket',
+            component: () => import('../views/main/member/ticket.vue')
+        }]
+    }]
+},  {
     path: '',
     redirect: '/welcome'
   }];
