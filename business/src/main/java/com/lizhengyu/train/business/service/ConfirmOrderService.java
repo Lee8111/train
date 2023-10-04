@@ -19,6 +19,7 @@ import com.lizhengyu.train.business.req.ConfirmOrderDoReq;
 import com.lizhengyu.train.business.req.ConfirmOrderQueryReq;
 import com.lizhengyu.train.business.req.ConfirmOrderTicketReq;
 import com.lizhengyu.train.business.resp.ConfirmOrderQueryResp;
+import com.lizhengyu.train.common.context.LoginMemberContext;
 import com.lizhengyu.train.common.exception.BusinessException;
 import com.lizhengyu.train.common.exception.BusinessExceptionEnum;
 import com.lizhengyu.train.common.resp.PageResp;
@@ -101,7 +102,7 @@ public class ConfirmOrderService {
         DateTime now = DateTime.now();
         ConfirmOrder confirmOrder = new ConfirmOrder();
         confirmOrder.setId(SnowUtil.getSnowflakeNextId());
-        confirmOrder.setMemberId(req.getMemberId());
+        confirmOrder.setMemberId(LoginMemberContext.getId());
         confirmOrder.setDate(date);
         confirmOrder.setTrainCode(trainCode);
         confirmOrder.setStart(start);
@@ -127,7 +128,7 @@ public class ConfirmOrderService {
         //比如选择的是C1,D2，则偏移值是[0,5]
         //比如选择的是A1,B1,C1，则偏移值是[0,1,2]
         ConfirmOrderTicketReq ticketReq0 = tickets.get(0);
-        if(StrUtil.isBlank(ticketReq0.getSeat())){
+        if(StrUtil.isNotBlank(ticketReq0.getSeat())){
             //查出本次选座的座位类型都有哪些列，用于计算所选座位与第一个座位的偏离值
             List<SeatColEnum> colEnumList = SeatColEnum.getColsByType(ticketReq0.getSeatTypeCode());
             LOG.info("本次选座的座位类型包含的列:{}",colEnumList);
