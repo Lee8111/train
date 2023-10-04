@@ -21,11 +21,6 @@
             <groupId>com.lizhengyu</groupId>
             <artifactId>common</artifactId>
         </dependency>
-        <!-- 配置中心-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
