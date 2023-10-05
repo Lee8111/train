@@ -289,12 +289,12 @@ public class ConfirmOrderService {
      * @param column
      * @param offsetList
      */
-    private void getSeat(List<DailyTrainSeat> finalSeatList,Date date, String trainCode,String seatType,String column,List<Integer> offsetList,Integer startIndex,Integer endIndex){
+    private void getSeat(List<DailyTrainSeat> finalSeatList, Date date, String trainCode, String seatType, String column, List<Integer> offsetList, Integer startIndex, Integer endIndex) {
         List<DailyTrainSeat> getSeatList = new ArrayList<>();
         List<DailyTrainCarriage> carriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
         LOG.info("共查出{}个符合条件的车厢", carriageList.size());
 
-        //一个车厢一个车厢的获取座位数据
+        // 一个车箱一个车箱的获取座位数据
         for (DailyTrainCarriage dailyTrainCarriage : carriageList) {
             LOG.info("开始从车厢{}选座", dailyTrainCarriage.getIndex());
             getSeatList = new ArrayList<>();
