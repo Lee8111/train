@@ -80,6 +80,7 @@
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>3.21.0</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
