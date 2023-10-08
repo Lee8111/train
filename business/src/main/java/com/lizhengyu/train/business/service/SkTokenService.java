@@ -21,6 +21,7 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -33,20 +34,23 @@ public class SkTokenService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SkTokenService.class);
 
-
-
     @Resource
     private SkTokenMapper skTokenMapper;
+
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
+
     @Resource
     private DailyTrainStationService dailyTrainStationService;
+
     @Resource
     private SkTokenMapperCust skTokenMapperCust;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Value("${spring.profiles.active}")
+    private String env;
 
     /**
      * 初始化
@@ -118,6 +122,7 @@ public class SkTokenService {
     public void delete(Long id) {
         skTokenMapper.deleteByPrimaryKey(id);
     }
+
     /**
      * 校验令牌
      */

@@ -9,6 +9,8 @@ import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lizhengyu.train.business.domain.*;
+import com.lizhengyu.train.business.req.SeatSellReq;
+import com.lizhengyu.train.business.resp.SeatSellResp;
 import com.lizhengyu.train.common.resp.PageResp;
 import com.lizhengyu.train.common.util.SnowUtil;
 import com.lizhengyu.train.business.mapper.DailyTrainSeatMapper;
@@ -31,8 +33,10 @@ public class DailyTrainSeatService {
 
     @Resource
     private DailyTrainSeatMapper dailyTrainSeatMapper;
+
     @Resource
     private TrainSeatService trainSeatService;
+
     @Resource
     private TrainStationService trainStationService;
 
@@ -52,7 +56,7 @@ public class DailyTrainSeatService {
 
     public PageResp<DailyTrainSeatQueryResp> queryList(DailyTrainSeatQueryReq req) {
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        dailyTrainSeatExample.setOrderByClause("date desc,train_code asc, carriage_index asc, carriage_seat_index asc");
+        dailyTrainSeatExample.setOrderByClause("date desc, train_code asc, carriage_index asc, carriage_seat_index asc");
         DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
         if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
             criteria.andTrainCodeEqualTo(req.getTrainCode());
@@ -81,9 +85,9 @@ public class DailyTrainSeatService {
 
     @Transactional
     public void genDaily(Date date, String trainCode) {
-        LOG.info("生成日期【{}】车次【{}】的车座信息开始", DateUtil.formatDate(date), trainCode);
+        LOG.info("生成日期【{}】车次【{}】的座位信息开始", DateUtil.formatDate(date), trainCode);
 
-        // 删除某日某车次的车座信息
+        // 删除某日某车次的座位信息
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
         dailyTrainSeatExample.createCriteria()
                 .andDateEqualTo(date)
@@ -91,12 +95,12 @@ public class DailyTrainSeatService {
         dailyTrainSeatMapper.deleteByExample(dailyTrainSeatExample);
 
         List<TrainStation> stationList = trainStationService.selectByTrainCode(trainCode);
-        String sell= StrUtil.fillBefore("",'0',stationList.size()-1);
+        String sell = StrUtil.fillBefore("", '0', stationList.size() - 1);
 
-        // 查出某车次的所有的车座信息
+        // 查出某车次的所有的座位信息
         List<TrainSeat> seatList = trainSeatService.selectByTrainCode(trainCode);
         if (CollUtil.isEmpty(seatList)) {
-            LOG.info("该车次没有车座基础数据，生成该车次的车座信息结束");
+            LOG.info("该车次没有座位基础数据，生成该车次的座位信息结束");
             return;
         }
 
@@ -110,32 +114,50 @@ public class DailyTrainSeatService {
             dailyTrainSeat.setSell(sell);
             dailyTrainSeatMapper.insert(dailyTrainSeat);
         }
-        LOG.info("生成日期【{}】车次【{}】的车座信息结束", DateUtil.formatDate(date), trainCode);
+        LOG.info("生成日期【{}】车次【{}】的座位信息结束", DateUtil.formatDate(date), trainCode);
     }
-    public int countSeat(Date date,String trainCode){
-        return countSeat(date,trainCode,null);
+
+    public int countSeat(Date date, String trainCode) {
+        return countSeat(date, trainCode, null);
     }
-    public int countSeat(Date date,String trainCode,String seatType){
-        DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
+
+    public int countSeat(Date date, String trainCode, String seatType) {
+        DailyTrainSeatExample example = new DailyTrainSeatExample();
+        DailyTrainSeatExample.Criteria criteria = example.createCriteria();
         criteria.andDateEqualTo(date)
                 .andTrainCodeEqualTo(trainCode);
-        if(StrUtil.isNotBlank(seatType)){
+        if (StrUtil.isNotBlank(seatType)) {
             criteria.andSeatTypeEqualTo(seatType);
         }
-
-        long l = dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
-        if(l==0L){
+        long l = dailyTrainSeatMapper.countByExample(example);
+        if (l == 0L) {
             return -1;
         }
-        return (int)l;
+        return (int) l;
     }
-    public List<DailyTrainSeat> selectByCarriage(Date date, String trainCode,Integer carriageIndex){
+
+    public List<DailyTrainSeat> selectByCarriage(Date date, String trainCode, Integer carriageIndex) {
+        DailyTrainSeatExample example = new DailyTrainSeatExample();
+        example.setOrderByClause("carriage_seat_index asc");
+        example.createCriteria()
+                .andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode)
+                .andCarriageIndexEqualTo(carriageIndex);
+        return dailyTrainSeatMapper.selectByExample(example);
+    }
+
+    /**
+     * 查询某日某车次的所有座位
+     */
+    public List<SeatSellResp> querySeatSell(SeatSellReq req) {
+        Date date = req.getDate();
+        String trainCode = req.getTrainCode();
+        LOG.info("查询日期【{}】车次【{}】的座位销售信息", DateUtil.formatDate(date), trainCode);
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        dailyTrainSeatExample.setOrderByClause("carriage_seat_index asc");
+        dailyTrainSeatExample.setOrderByClause("`carriage_index` asc, carriage_seat_index asc");
         dailyTrainSeatExample.createCriteria()
                 .andDateEqualTo(date)
-                .andTrainCodeEqualTo(trainCode).andCarriageIndexEqualTo(carriageIndex);
-      return  dailyTrainSeatMapper.selectByExample(dailyTrainSeatExample);
+                .andTrainCodeEqualTo(trainCode);
+        return BeanUtil.copyToList(dailyTrainSeatMapper.selectByExample(dailyTrainSeatExample), SeatSellResp.class);
     }
 }

@@ -37,7 +37,7 @@ public class BeforeConfirmOrderService {
     @Autowired
     private SkTokenService skTokenService;
 
-    // @Resource
+     @Resource
     // public RocketMQTemplate rocket
      public RocketMQTemplate rocketMQTemplate;
 
